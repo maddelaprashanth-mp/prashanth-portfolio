@@ -97,7 +97,7 @@ portfolioItems.forEach(item => {
                 // Fallback image based on category
                 const fallbackImages = {
                     'Branding': 'https://images.unsplash.com/photo-1442512595331-e89e73853f31?w=800&h=500&fit=crop',
-                    'Web Design': 'https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?w=800&h=500&fit=crop',
+                    'Poster Design': 'https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?w=800&h=500&fit=crop',
                     'Print Design': 'https://images.unsplash.com/photo-1556761175-b413da4baf72?w=800&h=500&fit=crop',
                     'Flyer Design': 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=800&h=500&fit=crop'
                 };
