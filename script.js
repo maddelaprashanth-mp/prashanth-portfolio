@@ -57,23 +57,29 @@ if (filterButtons.length) {
     filterPortfolio('all');
 }
 
-// ==================== PORTFOLIO ITEM CLICK HANDLER - OPEN NEW PAGE ====================
-// Portfolio item data mapping for navigation
-const portfolioPageMapping = {
+// ==================== MODAL FUNCTIONALITY ====================
+const modal = document.getElementById('portfolioModal');
+const modalImage = document.getElementById('modalImage');
+const modalTitle = document.getElementById('modalTitle');
+const modalCategory = document.getElementById('modalCategory');
+const closeBtn = document.querySelector('.modal-close');
+
+// Portfolio item data mapping
+const portfolioData = {
     // Branding items
-    'Coffee Brand': { page: 'poster-detail.html', id: 'coffee-brand' },
-    'Fashion Brand': { page: 'poster-detail.html', id: 'fashion-brand' },
-    'Restaurant Brand': { page: 'poster-detail.html', id: 'restaurant-brand' },
+    'Coffee Brand': { image: 'https://images.unsplash.com/photo-1442512595331-e89e73853f31?w=800&h=500&fit=crop', category: 'Branding' },
+    'Fashion Brand': { image: 'https://images.unsplash.com/photo-1445205170230-053b83016050?w=800&h=500&fit=crop', category: 'Branding' },
+    'Restaurant Brand': { image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&h=500&fit=crop', category: 'Branding' },
     // Web Design items
-    'Web Design Project': { page: 'poster-detail.html', id: 'web-design' },
-    'Flyer Design': { page: 'poster-detail.html', id: 'flyer-design' },
-    'App UI Design': { page: 'poster-detail.html', id: 'app-ui-design' },
+    'Web Design Project': { image: 'https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?w=800&h=500&fit=crop', category: 'Web Design' },
+    'Flyer Design': { image: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=800&h=500&fit=crop', category: 'Flyer Design' },
+    'App UI Design': { image: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=800&h=500&fit=crop', category: 'Web Design' },
     // Print items
-    'Print Campaign': { page: 'poster-detail.html', id: 'print-campaign' },
-    'Poster Design': { page: 'poster-detail.html', id: 'poster-design' }
+    'Print Campaign': { image: 'https://images.unsplash.com/photo-1556761175-b413da4baf72?w=800&h=500&fit=crop', category: 'Print Design' },
+    'Poster Design': { image: "/imagess/SAIL INTO Discover the world's most breathtaking.jpg", category: 'Poster Design' }
 };
 
-// Add click event to all portfolio items to open new page
+// Add click event to all portfolio items
 portfolioItems.forEach(item => {
     item.addEventListener('click', () => {
         const titleElement = item.querySelector('.portfolio-info h3');
@@ -81,15 +87,27 @@ portfolioItems.forEach(item => {
         const title = titleElement ? titleElement.innerText : 'Design Project';
         const category = categoryElement ? categoryElement.innerText : 'Design';
         
-        // Get the page mapping
-        const mapping = portfolioPageMapping[title];
+        // Get image data
+        const imageData = portfolioData[title];
         
-        if (mapping) {
-            // Open new page with the poster ID as query parameter
-            window.location.href = `${mapping.page}?id=${mapping.id}`;
-        } else {
-            // Default fallback - open a generic poster page
-            window.location.href = `poster-detail.html?title=${encodeURIComponent(title)}`;
+        if (modal && modalImage && modalTitle && modalCategory) {
+            if (imageData) {
+                modalImage.src = imageData.image;
+            } else {
+                // Fallback image based on category
+                const fallbackImages = {
+                    'Branding': 'https://images.unsplash.com/photo-1442512595331-e89e73853f31?w=800&h=500&fit=crop',
+                    'Poster Design': 'https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?w=800&h=500&fit=crop',
+                    'Print Design': 'https://images.unsplash.com/photo-1556761175-b413da4baf72?w=800&h=500&fit=crop',
+                    'Flyer Design': 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=800&h=500&fit=crop'
+                };
+                modalImage.src = fallbackImages[category] || 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=800&h=500&fit=crop';
+            }
+            
+            // modalTitle.innerText = title;
+            // modalCategory.innerText = category;
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
         }
     });
 });
@@ -134,118 +152,7 @@ document.querySelectorAll('.nav-link').forEach(link => {
     }
 });
 
-// ==================== POSTER DETAIL PAGE HANDLER ====================
-// Add this code for the poster detail page
-if (window.location.pathname.includes('poster-detail.html')) {
-    // Get the poster ID from URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const posterId = urlParams.get('id');
-    const posterTitle = urlParams.get('title');
-    
-    // Poster data for each item
-    const posterData = {
-        'coffee-brand': {
-            title: 'Coffee Brand Identity',
-            category: 'Branding',
-            image: 'https://images.unsplash.com/photo-1442512595331-e89e73853f31?w=1200&h=800&fit=crop',
-            description: 'A complete brand identity design for a premium coffee shop, including logo design, packaging, and marketing materials.',
-            client: 'Brew Haven Coffee',
-            year: '2024',
-            tools: 'Adobe Illustrator, Photoshop'
-        },
-        'fashion-brand': {
-            title: 'Fashion Brand Campaign',
-            category: 'Branding',
-            image: 'https://images.unsplash.com/photo-1445205170230-053b83016050?w=1200&h=800&fit=crop',
-            description: 'Visual identity and campaign design for a modern fashion brand targeting young professionals.',
-            client: 'Urban Chic',
-            year: '2023',
-            tools: 'Figma, Adobe Creative Suite'
-        },
-        'restaurant-brand': {
-            title: 'Restaurant Brand Design',
-            category: 'Branding',
-            image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1200&h=800&fit=crop',
-            description: 'Complete branding solution for a fine dining restaurant including menu design, signage, and promotional materials.',
-            client: 'The Golden Spoon',
-            year: '2024',
-            tools: 'Photoshop, InDesign'
-        },
-        'web-design': {
-            title: 'Web Design Project',
-            category: 'Web Design',
-            image: 'https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?w=1200&h=800&fit=crop',
-            description: 'Modern responsive website design with focus on user experience and conversion optimization.',
-            client: 'TechStart Solutions',
-            year: '2024',
-            tools: 'Figma, Adobe XD'
-        },
-        'flyer-design': {
-            title: 'Flyer Design',
-            category: 'Flyer Design',
-            image: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=1200&h=800&fit=crop',
-            description: 'Creative flyer design for event promotion with eye-catching visuals and clear messaging.',
-            client: 'Summer Music Festival',
-            year: '2023',
-            tools: 'InDesign, Photoshop'
-        },
-        'app-ui-design': {
-            title: 'App UI Design',
-            category: 'Web Design',
-            image: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=1200&h=800&fit=crop',
-            description: 'User interface design for a mobile application with focus on usability and modern aesthetics.',
-            client: 'FitTrack App',
-            year: '2024',
-            tools: 'Figma, Sketch'
-        },
-        'print-campaign': {
-            title: 'Print Campaign',
-            category: 'Print Design',
-            image: 'https://images.unsplash.com/photo-1556761175-b413da4baf72?w=1200&h=800&fit=crop',
-            description: 'Comprehensive print campaign including brochures, posters, and direct mail pieces.',
-            client: 'EcoLiving Initiative',
-            year: '2023',
-            tools: 'InDesign, Illustrator'
-        },
-        'poster-design': {
-            title: 'Poster Design',
-            category: 'Poster Design',
-            image: "/imagess/SAIL INTO Discover the world's most breathtaking.jpg",
-            description: 'Eye-catching poster design for promotional campaigns with strong visual impact.',
-            client: 'Travel Agency',
-            year: '2024',
-            tools: 'Photoshop, Illustrator'
-        }
-    };
-    
-    // Get the specific poster data
-    const currentPoster = posterData[posterId] || {
-        title: posterTitle || 'Design Project',
-        category: 'Design',
-        image: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=1200&h=800&fit=crop',
-        description: 'Beautiful design project showcasing creative excellence and attention to detail.',
-        client: 'Various Clients',
-        year: '2024',
-        tools: 'Adobe Creative Suite'
-    };
-    
-    // Update the page with poster data
-    const posterImage = document.getElementById('posterImage');
-    const posterTitleEl = document.getElementById('posterTitle');
-    const posterCategory = document.getElementById('posterCategory');
-    const posterDescription = document.getElementById('posterDescription');
-    const clientName = document.getElementById('clientName');
-    const projectYear = document.getElementById('projectYear');
-    const toolsUsed = document.getElementById('toolsUsed');
-    
-    if (posterImage) posterImage.src = currentPoster.image;
-    if (posterTitleEl) posterTitleEl.textContent = currentPoster.title;
-    if (posterCategory) posterCategory.textContent = currentPoster.category;
-    if (posterDescription) posterDescription.textContent = currentPoster.description;
-    if (clientName) clientName.textContent = currentPoster.client;
-    if (projectYear) projectYear.textContent = currentPoster.year;
-    if (toolsUsed) toolsUsed.textContent = currentPoster.tools;
-}
+// ==================== SMOOTH SCROLL FOR ANCHOR LINKS ===================
 
 // ==================== CONTACT FORM VALIDATION ====================
 // Add this code to your existing script.js file
@@ -344,7 +251,7 @@ if (contactForm) {
             
             // Remove error classes if any
             [fullnameInput, emailInput, messageInput].forEach(field => {
-                if (field) field.classList.remove('error');
+                field.classList.remove('error');
             });
             
             // Scroll to success message smoothly
