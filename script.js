@@ -153,3 +153,127 @@ document.querySelectorAll('.nav-link').forEach(link => {
 });
 
 // ==================== SMOOTH SCROLL FOR ANCHOR LINKS ===================
+
+// ==================== CONTACT FORM VALIDATION ====================
+// Add this code to your existing script.js file
+
+// Check if we're on the contact page
+const contactForm = document.getElementById('contactForm');
+if (contactForm) {
+    const fullnameInput = document.getElementById('fullname');
+    const emailInput = document.getElementById('email');
+    const messageInput = document.getElementById('message');
+    const nameError = document.getElementById('nameError');
+    const emailError = document.getElementById('emailError');
+    const messageError = document.getElementById('messageError');
+    const successDiv = document.getElementById('successMessage');
+    
+    // Validation Functions
+    function validateName() {
+        const name = fullnameInput.value.trim();
+        if (name === '') {
+            nameError.innerHTML = '<i class="fas fa-exclamation-circle"></i> Full name is required.';
+            fullnameInput.classList.add('error');
+            return false;
+        } else if (name.length < 2) {
+            nameError.innerHTML = '<i class="fas fa-exclamation-circle"></i> Name must be at least 2 characters.';
+            fullnameInput.classList.add('error');
+            return false;
+        } else if (name.length > 50) {
+            nameError.innerHTML = '<i class="fas fa-exclamation-circle"></i> Name must be less than 50 characters.';
+            fullnameInput.classList.add('error');
+            return false;
+        } else {
+            nameError.innerHTML = '';
+            fullnameInput.classList.remove('error');
+            return true;
+        }
+    }
+    
+    function validateEmail() {
+        const email = emailInput.value.trim();
+        const emailRegex = /^[^\s@]+@([^\s@]+\.)+[^\s@]+$/;
+        if (email === '') {
+            emailError.innerHTML = '<i class="fas fa-exclamation-circle"></i> Email address is required.';
+            emailInput.classList.add('error');
+            return false;
+        } else if (!emailRegex.test(email)) {
+            emailError.innerHTML = '<i class="fas fa-exclamation-circle"></i> Please enter a valid email address (e.g., name@domain.com).';
+            emailInput.classList.add('error');
+            return false;
+        } else {
+            emailError.innerHTML = '';
+            emailInput.classList.remove('error');
+            return true;
+        }
+    }
+    
+    function validateMessage() {
+        const msg = messageInput.value.trim();
+        if (msg === '') {
+            messageError.innerHTML = '<i class="fas fa-exclamation-circle"></i> Message cannot be empty. Tell me about your project.';
+            messageInput.classList.add('error');
+            return false;
+        } else if (msg.length < 10) {
+            messageError.innerHTML = '<i class="fas fa-exclamation-circle"></i> Please provide more details (minimum 10 characters).';
+            messageInput.classList.add('error');
+            return false;
+        } else if (msg.length > 1000) {
+            messageError.innerHTML = '<i class="fas fa-exclamation-circle"></i> Message is too long (maximum 1000 characters).';
+            messageInput.classList.add('error');
+            return false;
+        } else {
+            messageError.innerHTML = '';
+            messageInput.classList.remove('error');
+            return true;
+        }
+    }
+    
+    // Live validation on input
+    if (fullnameInput) fullnameInput.addEventListener('input', validateName);
+    if (emailInput) emailInput.addEventListener('input', validateEmail);
+    if (messageInput) messageInput.addEventListener('input', validateMessage);
+    
+    // Form submission handler
+    contactForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const isNameValid = validateName();
+        const isEmailValid = validateEmail();
+        const isMessageValid = validateMessage();
+        
+        if (isNameValid && isEmailValid && isMessageValid) {
+            // Show success message
+            successDiv.classList.add('show');
+            
+            // Clear the form
+            contactForm.reset();
+            
+            // Remove error classes if any
+            [fullnameInput, emailInput, messageInput].forEach(field => {
+                field.classList.remove('error');
+            });
+            
+            // Scroll to success message smoothly
+            successDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            // Hide success message after 5 seconds
+            setTimeout(() => {
+                successDiv.classList.remove('show');
+            }, 5000);
+            
+            // You can replace this with actual API call to send email
+            console.log('Contact form submitted:', {
+                name: fullnameInput.value.trim(),
+                email: emailInput.value.trim(),
+                message: messageInput.value.trim(),
+                timestamp: new Date().toISOString()
+            });
+        } else {
+            // Focus on the first invalid field
+            if (!isNameValid && fullnameInput) fullnameInput.focus();
+            else if (!isEmailValid && emailInput) emailInput.focus();
+            else if (!isMessageValid && messageInput) messageInput.focus();
+        }
+    });
+}
