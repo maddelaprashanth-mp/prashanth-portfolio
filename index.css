@@ -140,9 +140,11 @@ body {
 }
 
 .image-placeholder-1 {
+    background-image: url("imagess/Circle.png");
+    background-size: cover;
     width: 350px;
     height: 350px;
-    background: linear-gradient(135deg, #6b46c1, #8b5cf6);
+    /* background: linear-gradient(135deg, #6b46c1, #8b5cf6); */
     border-radius: 50%;
     box-shadow: 0 20px 40px rgba(107, 70, 193, 0.2);
 }
