@@ -1,327 +1,258 @@
 // ==================== HAMBURGER MENU TOGGLE ====================
-const hamburger = document.getElementById("hamburger");
-const navMenu = document.getElementById("navMenu");
+const hamburger = document.getElementById('hamburger');
+const navMenu = document.getElementById('navMenu');
 
 if (hamburger && navMenu) {
-  hamburger.addEventListener("click", () => {
-    hamburger.classList.toggle("active");
-    navMenu.classList.toggle("active");
+  hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('active');
+    navMenu.classList.toggle('active');
   });
-
-  // Close menu when clicking on any nav link
-  document.querySelectorAll(".nav-link").forEach((link) => {
-    link.addEventListener("click", () => {
-      hamburger.classList.remove("active");
-      navMenu.classList.remove("active");
+  
+  document.querySelectorAll('.nav-link').forEach(link => {
+    link.addEventListener('click', () => {
+      hamburger.classList.remove('active');
+      navMenu.classList.remove('active');
     });
   });
 }
 
-// ==================== PORTFOLIO FILTER FUNCTIONALITY ====================
-const filterButtons = document.querySelectorAll(".filter-btn");
-const portfolioItems = document.querySelectorAll(".portfolio-item");
+// ==================== FILTER FUNCTIONALITY ====================
+const filterBtns = document.querySelectorAll('.filter-btn');
+const portfolioItems = document.querySelectorAll('.portfolio-item');
 
-function filterPortfolio(category) {
-  portfolioItems.forEach((item) => {
-    const itemCategory = item.getAttribute("data-category");
-    if (category === "all" || itemCategory === category) {
-      item.style.display = "block";
-      setTimeout(() => {
-        item.style.opacity = "1";
-      }, 10);
+function filterItems(category) {
+  portfolioItems.forEach(item => {
+    const itemCat = item.getAttribute('data-category');
+    if (category === 'all' || itemCat === category) {
+      item.style.display = 'block';
+      setTimeout(() => { item.style.opacity = '1'; }, 10);
     } else {
-      item.style.opacity = "0";
-      item.style.display = "none";
+      item.style.display = 'none';
+      item.style.opacity = '0';
     }
   });
-
-  // Update active state of filter buttons
-  filterButtons.forEach((btn) => {
-    if (btn.getAttribute("data-filter") === category) {
-      btn.classList.add("active");
+  
+  filterBtns.forEach(btn => {
+    if (btn.getAttribute('data-filter') === category) {
+      btn.classList.add('active');
     } else {
-      btn.classList.remove("active");
+      btn.classList.remove('active');
     }
   });
 }
 
-// Add click event to filter buttons if they exist on the page
-if (filterButtons.length) {
-  filterButtons.forEach((button) => {
-    button.addEventListener("click", (e) => {
-      const filterValue = button.getAttribute("data-filter");
-      filterPortfolio(filterValue);
+if (filterBtns.length) {
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const value = btn.getAttribute('data-filter');
+      filterItems(value);
     });
   });
-  // Initialize showing all items
-  filterPortfolio("all");
+  filterItems('all');
 }
 
-// ==================== MODAL FUNCTIONALITY ====================
-const modal = document.getElementById("portfolioModal");
-const modalImage = document.getElementById("modalImage");
-const modalTitle = document.getElementById("modalTitle");
-const modalCategory = document.getElementById("modalCategory");
-const closeBtn = document.querySelector(".modal-close");
+// ==================== MODAL FOR ORIGINAL SIZE (POSTER CLICK) ====================
+const modal = document.getElementById('originalModal');
+const modalImg = document.getElementById('modalOriginalImg');
+const modalTitleSpan = document.getElementById('modalOriginalTitle');
+const modalCategorySpan = document.getElementById('modalOriginalCategory');
+const closeModalBtn = document.querySelector('.modal-close');
 
-// Portfolio item data mapping
-const portfolioData = {
-  // Branding items
-  "Coffee Brand": {
-    image:
-      "https://images.unsplash.com/photo-1442512595331-e89e73853f31?w=800&h=500&fit=crop",
-    category: "Branding",
-  },
-  "Fashion Brand": {
-    image:
-      "https://images.unsplash.com/photo-1445205170230-053b83016050?w=800&h=500&fit=crop",
-    category: "Branding",
-  },
-  "Restaurant Brand": {
-    image:
-      "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&h=500&fit=crop",
-    category: "Branding",
-  },
-  // Web Design items
-  "Web Design Project": {
-    image:
-      "https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?w=800&h=500&fit=crop",
-    category: "Web Design",
-  },
-  "Flyer Design": {
-    image:
-      "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=800&h=500&fit=crop",
-    category: "Flyer Design",
-  },
-  "App UI Design": {
-    image:
-      "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=800&h=500&fit=crop",
-    category: "Web Design",
-  },
-  // Print items
-  "Print Campaign": {
-    image:
-      "https://images.unsplash.com/photo-1556761175-b413da4baf72?w=800&h=500&fit=crop",
-    category: "Print Design",
-  },
-  "Poster Design": {
-    image: "/imagess/SAIL INTO Discover the world's most breathtaking.jpg",
-    category: "Poster Design",
-  },
-};
+// Define high-resolution / original source mapping
+const originalImageMap = new Map();
+const itemsData = [
+  { title: "Coffee Brand", category: "Branding", imgSrc: "https://images.unsplash.com/photo-1442512595331-e89e73853f31?w=1600&h=1200&fit=crop" },
+  { title: "Poster Design", category: "Poster", imgSrc: "https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?w=2000&h=1500&fit=crop" },
+  { title: "Print Campaign", category: "Print Design", imgSrc: "https://images.unsplash.com/photo-1556761175-b413da4baf72?w=1800&h=1200&fit=crop" },
+  { title: "Event Poster", category: "Poster", imgSrc: "https://images.unsplash.com/photo-1545987796-200677ee1011?w=2400&h=1600&fit=crop" },
+  { title: "Restaurant Brand", category: "Branding", imgSrc: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=2000&h=1500&fit=crop" },
+  { title: "Flyer Design", category: "Flyer Design", imgSrc: "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=2000&h=1500&fit=crop" },
+  { title: "Cinematic Poster", category: "Poster Design", imgSrc: "https://images.unsplash.com/photo-1500462918059-b1a0cb512f1d?w=2400&h=1600&fit=crop" }
+];
 
-// Add click event to all portfolio items
-portfolioItems.forEach((item) => {
-  item.addEventListener("click", () => {
-    const titleElement = item.querySelector(".portfolio-info h3");
-    const categoryElement = item.querySelector(".portfolio-info p");
-    const title = titleElement ? titleElement.innerText : "Design Project";
-    const category = categoryElement ? categoryElement.innerText : "Design";
+itemsData.forEach(item => {
+  originalImageMap.set(item.title, { img: item.imgSrc, category: item.category });
+});
 
-    // Get image data
-    const imageData = portfolioData[title];
-
-    if (modal && modalImage && modalTitle && modalCategory) {
-      if (imageData) {
-        modalImage.src = imageData.image;
+// Attach click event to each portfolio-item
+portfolioItems.forEach(item => {
+  item.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const titleEl = item.querySelector('.portfolio-info h3');
+    const categoryEl = item.querySelector('.portfolio-info p');
+    let title = titleEl ? titleEl.innerText.trim() : "Design Project";
+    let category = categoryEl ? categoryEl.innerText.trim() : "Design";
+    
+    let finalImgUrl = "";
+    const imgInside = item.querySelector('.portfolio-image img');
+    
+    if (originalImageMap.has(title)) {
+      const data = originalImageMap.get(title);
+      finalImgUrl = data.img;
+      category = data.category || category;
+    } else {
+      if (imgInside && imgInside.src) {
+        let baseSrc = imgInside.src;
+        if (baseSrc.includes('unsplash.com')) {
+          baseSrc = baseSrc.replace(/w=\d+/, 'w=2000').replace(/h=\d+/, 'h=1600');
+        }
+        finalImgUrl = baseSrc;
       } else {
-        // Fallback image based on category
-        const fallbackImages = {
-          Branding:
-            "https://images.unsplash.com/photo-1442512595331-e89e73853f31?w=800&h=500&fit=crop",
-          "Poster Design":
-            "https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?w=800&h=500&fit=crop",
-          "Print Design":
-            "https://images.unsplash.com/photo-1556761175-b413da4baf72?w=800&h=500&fit=crop",
-          "Flyer Design":
-            "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=800&h=500&fit=crop",
-        };
-        modalImage.src =
-          fallbackImages[category] ||
-          "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=800&h=500&fit=crop";
+        finalImgUrl = "https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?w=2000&h=1500&fit=crop";
       }
-
-      // modalTitle.innerText = title;
-      // modalCategory.innerText = category;
-      modal.style.display = "block";
-      document.body.style.overflow = "hidden";
     }
+    
+    modalImg.src = finalImgUrl;
+    modalTitleSpan.innerText = title;
+    modalCategorySpan.innerText = category;
+    modal.style.display = "flex";
+    document.body.style.overflow = "hidden";
+    modalImg.style.transform = "scale(1)";
   });
 });
 
-// Close modal function
+// Close modal functions
 function closeModal() {
   if (modal) {
     modal.style.display = "none";
     document.body.style.overflow = "auto";
+    modalImg.src = "";
   }
 }
 
-// Close modal when clicking X
-if (closeBtn) {
-  closeBtn.addEventListener("click", closeModal);
-}
-
-// Close modal when clicking outside modal content
-if (modal) {
-  modal.addEventListener("click", (e) => {
-    if (e.target === modal) {
-      closeModal();
-    }
-  });
-}
-
-// Close modal with Escape key
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && modal && modal.style.display === "block") {
-    closeModal();
-  }
+if (closeModalBtn) closeModalBtn.addEventListener('click', closeModal);
+modal.addEventListener('click', (e) => {
+  if (e.target === modal) closeModal();
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && modal.style.display === 'flex') closeModal();
 });
 
-// ==================== ACTIVE NAVIGATION LINK HIGHLIGHTING ====================
-const currentPage = window.location.pathname.split("/").pop() || "index.html";
-document.querySelectorAll(".nav-link").forEach((link) => {
-  const linkHref = link.getAttribute("href");
-  if (
-    linkHref === currentPage ||
-    (currentPage === "index.html" && linkHref === "index.html")
-  ) {
-    link.classList.add("active");
-  } else if (currentPage === "" && linkHref === "index.html") {
-    link.classList.add("active");
+// ==================== PARTICLE CANVAS BACKGROUND ====================
+const canvasBg = document.getElementById('particleCanvas');
+if (canvasBg) {
+  const ctxParticle = canvasBg.getContext('2d');
+  let particlesArray = [];
+  
+  function initParticleCanvas() {
+    canvasBg.width = window.innerWidth;
+    canvasBg.height = window.innerHeight;
   }
+  
+  function createParticlesBG() {
+    particlesArray = [];
+    for(let i = 0; i < 70; i++) {
+      particlesArray.push({
+        x: Math.random() * canvasBg.width,
+        y: Math.random() * canvasBg.height,
+        radius: Math.random() * 2 + 1,
+        vx: (Math.random() - 0.5) * 0.25,
+        vy: (Math.random() - 0.5) * 0.25,
+      });
+    }
+  }
+  
+  function drawParticlesBG() {
+    if (!ctxParticle) return;
+    ctxParticle.clearRect(0, 0, canvasBg.width, canvasBg.height);
+    ctxParticle.fillStyle = "rgba(110, 110, 180, 0.35)";
+    for(let p of particlesArray) {
+      ctxParticle.beginPath();
+      ctxParticle.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+      ctxParticle.fill();
+      p.x += p.vx;
+      p.y += p.vy;
+      if(p.x < 0 || p.x > canvasBg.width) p.vx *= -1;
+      if(p.y < 0 || p.y > canvasBg.height) p.vy *= -1;
+    }
+    requestAnimationFrame(drawParticlesBG);
+  }
+  
+  window.addEventListener('resize', () => {
+    canvasBg.width = window.innerWidth;
+    canvasBg.height = window.innerHeight;
+    createParticlesBG();
+  });
+  
+  initParticleCanvas();
+  createParticlesBG();
+  drawParticlesBG();
+}
+
+// ==================== CUSTOM MOUSE CURSOR ====================
+const mainCursor = document.createElement('div');
+const cursorRing = document.createElement('div');
+mainCursor.className = 'main-cursor';
+cursorRing.className = 'cursor-ring';
+document.body.appendChild(mainCursor);
+document.body.appendChild(cursorRing);
+
+let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
+
+document.addEventListener('mousemove', (e) => {
+  mouseX = e.clientX;
+  mouseY = e.clientY;
+  mainCursor.style.transform = `translate(${mouseX - 6}px, ${mouseY - 6}px)`;
 });
 
-// ==================== SMOOTH SCROLL FOR ANCHOR LINKS ===================
-
-// ==================== CONTACT FORM VALIDATION ====================
-// Add this code to your existing script.js file
-
-// Check if we're on the contact page
-const contactForm = document.getElementById("contactForm");
-if (contactForm) {
-  const fullnameInput = document.getElementById("fullname");
-  const emailInput = document.getElementById("email");
-  const messageInput = document.getElementById("message");
-  const nameError = document.getElementById("nameError");
-  const emailError = document.getElementById("emailError");
-  const messageError = document.getElementById("messageError");
-  const successDiv = document.getElementById("successMessage");
-
-  // Validation Functions
-  function validateName() {
-    const name = fullnameInput.value.trim();
-    if (name === "") {
-      nameError.innerHTML =
-        '<i class="fas fa-exclamation-circle"></i> Full name is required.';
-      fullnameInput.classList.add("error");
-      return false;
-    } else if (name.length < 2) {
-      nameError.innerHTML =
-        '<i class="fas fa-exclamation-circle"></i> Name must be at least 2 characters.';
-      fullnameInput.classList.add("error");
-      return false;
-    } else if (name.length > 50) {
-      nameError.innerHTML =
-        '<i class="fas fa-exclamation-circle"></i> Name must be less than 50 characters.';
-      fullnameInput.classList.add("error");
-      return false;
-    } else {
-      nameError.innerHTML = "";
-      fullnameInput.classList.remove("error");
-      return true;
-    }
-  }
-
-  function validateEmail() {
-    const email = emailInput.value.trim();
-    const emailRegex = /^[^\s@]+@([^\s@]+\.)+[^\s@]+$/;
-    if (email === "") {
-      emailError.innerHTML =
-        '<i class="fas fa-exclamation-circle"></i> Email address is required.';
-      emailInput.classList.add("error");
-      return false;
-    } else if (!emailRegex.test(email)) {
-      emailError.innerHTML =
-        '<i class="fas fa-exclamation-circle"></i> Please enter a valid email address (e.g., name@domain.com).';
-      emailInput.classList.add("error");
-      return false;
-    } else {
-      emailError.innerHTML = "";
-      emailInput.classList.remove("error");
-      return true;
-    }
-  }
-
-  function validateMessage() {
-    const msg = messageInput.value.trim();
-    if (msg === "") {
-      messageError.innerHTML =
-        '<i class="fas fa-exclamation-circle"></i> Message cannot be empty. Tell me about your project.';
-      messageInput.classList.add("error");
-      return false;
-    } else if (msg.length < 10) {
-      messageError.innerHTML =
-        '<i class="fas fa-exclamation-circle"></i> Please provide more details (minimum 10 characters).';
-      messageInput.classList.add("error");
-      return false;
-    } else if (msg.length > 1000) {
-      messageError.innerHTML =
-        '<i class="fas fa-exclamation-circle"></i> Message is too long (maximum 1000 characters).';
-      messageInput.classList.add("error");
-      return false;
-    } else {
-      messageError.innerHTML = "";
-      messageInput.classList.remove("error");
-      return true;
-    }
-  }
-
-  // Live validation on input
-  if (fullnameInput) fullnameInput.addEventListener("input", validateName);
-  if (emailInput) emailInput.addEventListener("input", validateEmail);
-  if (messageInput) messageInput.addEventListener("input", validateMessage);
-
-  // Form submission handler
-  contactForm.addEventListener("submit", function (e) {
-    e.preventDefault();
-
-    const isNameValid = validateName();
-    const isEmailValid = validateEmail();
-    const isMessageValid = validateMessage();
-
-    if (isNameValid && isEmailValid && isMessageValid) {
-      // Show success message
-      successDiv.classList.add("show");
-
-      // Clear the form
-      contactForm.reset();
-
-      // Remove error classes if any
-      [fullnameInput, emailInput, messageInput].forEach((field) => {
-        field.classList.remove("error");
-      });
-
-      // Scroll to success message smoothly
-      successDiv.scrollIntoView({ behavior: "smooth", block: "center" });
-
-      // Hide success message after 5 seconds
-      setTimeout(() => {
-        successDiv.classList.remove("show");
-      }, 5000);
-
-      // You can replace this with actual API call to send email
-      console.log("Contact form submitted:", {
-        name: fullnameInput.value.trim(),
-        email: emailInput.value.trim(),
-        message: messageInput.value.trim(),
-        timestamp: new Date().toISOString(),
-      });
-    } else {
-      // Focus on the first invalid field
-      if (!isNameValid && fullnameInput) fullnameInput.focus();
-      else if (!isEmailValid && emailInput) emailInput.focus();
-      else if (!isMessageValid && messageInput) messageInput.focus();
-    }
-  });
+function animateRing() {
+  ringX += (mouseX - ringX) * 0.12;
+  ringY += (mouseY - ringY) * 0.12;
+  cursorRing.style.transform = `translate(${ringX - 20}px, ${ringY - 20}px)`;
+  requestAnimationFrame(animateRing);
 }
+animateRing();
+
+const magEls = document.querySelectorAll('a, button, .portfolio-item, .filter-btn');
+magEls.forEach(el => {
+  el.addEventListener('mouseenter', () => cursorRing.classList.add('magnetic'));
+  el.addEventListener('mouseleave', () => cursorRing.classList.remove('magnetic'));
+});
+
+document.addEventListener('mouseleave', () => {
+  mainCursor.style.opacity = '0';
+  cursorRing.style.opacity = '0';
+});
+document.addEventListener('mouseenter', () => {
+  mainCursor.style.opacity = '1';
+  cursorRing.style.opacity = '0.8';
+});
+
+// Inject cursor styles dynamically
+const styleCursor = document.createElement('style');
+styleCursor.textContent = `
+  .main-cursor { 
+    position: fixed; 
+    width: 12px; 
+    height: 12px; 
+    background: #818cf8; 
+    border-radius: 50%; 
+    pointer-events: none; 
+    z-index: 10000; 
+    transition: 0.05s linear; 
+    mix-blend-mode: difference; 
+    box-shadow: 0 0 10px #a78bfa;
+  } 
+  .cursor-ring { 
+    position: fixed; 
+    width: 40px; 
+    height: 40px; 
+    border: 2px solid #818cf8; 
+    border-radius: 50%; 
+    pointer-events: none; 
+    z-index: 9999; 
+    transition: 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1); 
+    opacity: 0.8;
+  } 
+  .cursor-ring.magnetic { 
+    transform: scale(1.4); 
+    background: rgba(129, 140, 248, 0.15); 
+    backdrop-filter: blur(4px);
+  } 
+  @media (max-width: 768px) { 
+    .main-cursor, .cursor-ring { 
+      display: none; 
+    } 
+  }
+`;
+document.head.appendChild(styleCursor);
