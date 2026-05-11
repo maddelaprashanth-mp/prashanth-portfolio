@@ -255,10 +255,32 @@ body {
     margin-bottom: 1.5rem;
 }
 
-.icon-box, .icon-box-2, .icon-box-3 {
-    width: 70px;
-    height: 70px;
-    background: linear-gradient(135deg, #6b46c1, #8b5cf6);
+.icon-box {
+    background-image: url("./imagess/social-media.png");
+    background-size: cover;
+    width: 90px;
+    height: 90px;
+    /* background: linear-gradient(135deg, #6b46c1, #8b5cf6); */
+    border-radius: 20px;
+    margin: 0 auto;
+}
+
+.icon-box-2 {
+        background-image: url("./imagess/Broucher.png");
+    background-size: cover;
+    width: 90px;
+    height: 90px;
+    /* background: linear-gradient(135deg, #6b46c1, #8b5cf6); */
+    border-radius: 20px;
+    margin: 0 auto;
+}
+
+.icon-box-3 {
+            background-image: url("./imagess/print.png");
+    background-size: cover;
+    width: 90px;
+    height: 90px;
+    /* background: linear-gradient(135deg, #6b46c1, #8b5cf6); */
     border-radius: 20px;
     margin: 0 auto;
 }
