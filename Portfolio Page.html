@@ -263,6 +263,201 @@
   drawParticles();
 </script>
 
+<style>
+  .cursor-particle {
+    position: fixed;
+    width: 4px;
+    height: 4px;
+    background: #6366f1;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  
+  .main-cursor {
+    position: fixed;
+    width: 12px;
+    height: 12px;
+    background: #6366f1;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 10000;
+    transition: transform 0.05s linear;
+    box-shadow: 0 0 12px rgba(99, 102, 241, 0.6);
+    mix-blend-mode: difference;
+  }
+  
+  .cursor-ring {
+    position: fixed;
+    width: 40px;
+    height: 40px;
+    border: 2px solid #6366f1;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    opacity: 0.8;
+  }
+  
+  .cursor-ring.magnetic {
+    transform: scale(1.5);
+    border-color: #818cf8;
+    background: rgba(99, 102, 241, 0.1);
+    backdrop-filter: blur(4px);
+  }
+  
+  @media (max-width: 768px) {
+    .main-cursor, .cursor-ring, .cursor-particle {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  (function() {
+    // Create elements
+    const mainCursor = document.createElement('div');
+    const cursorRing = document.createElement('div');
+    mainCursor.className = 'main-cursor';
+    cursorRing.className = 'cursor-ring';
+    document.body.appendChild(mainCursor);
+    document.body.appendChild(cursorRing);
+    
+    // Trail particles array
+    let particles = [];
+    const MAX_PARTICLES = 12;
+    let mouseX = 0, mouseY = 0;
+    let ringX = 0, ringY = 0;
+    
+    // Create particle system
+    class Particle {
+      constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.size = Math.random() * 3 + 1;
+        this.life = 1;
+        this.decay = 0.02 + Math.random() * 0.03;
+      }
+      
+      update() {
+        this.life -= this.decay;
+        return this.life > 0;
+      }
+      
+      draw(ctx) {
+        ctx.fillStyle = `rgba(99, 102, 241, ${this.life * 0.5})`;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size * this.life, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+    
+    // Setup canvas for particles
+    const canvas = document.createElement('canvas');
+    canvas.style.position = 'fixed';
+    canvas.style.top = '0';
+    canvas.style.left = '0';
+    canvas.style.pointerEvents = 'none';
+    canvas.style.zIndex = '9998';
+    document.body.appendChild(canvas);
+    const ctx = canvas.getContext('2d');
+    
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    
+    // Track mouse
+    document.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      
+      // Add particle trail
+      particles.push(new Particle(mouseX, mouseY));
+      if (particles.length > MAX_PARTICLES) particles.shift();
+      
+      // Update cursor position instantly
+      mainCursor.style.transform = `translate(${mouseX - 6}px, ${mouseY - 6}px)`;
+    });
+    
+    // Smooth ring animation
+    function animateRing() {
+      ringX += (mouseX - ringX) * 0.12;
+      ringY += (mouseY - ringY) * 0.12;
+      cursorRing.style.transform = `translate(${ringX - 20}px, ${ringY - 20}px)`;
+      requestAnimationFrame(animateRing);
+    }
+    animateRing();
+    
+    // Draw particles
+    function drawParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles = particles.filter(p => p.update());
+      particles.forEach(p => p.draw(ctx));
+      requestAnimationFrame(drawParticles);
+    }
+    drawParticles();
+    
+    // Magnetic effect on buttons/links
+    const magneticElements = document.querySelectorAll('a, button, .btn, .project-card');
+    
+    magneticElements.forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        cursorRing.classList.add('magnetic');
+      });
+      
+      el.addEventListener('mouseleave', () => {
+        cursorRing.classList.remove('magnetic');
+      });
+      
+      el.addEventListener('mousemove', (e) => {
+        const rect = el.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        const distX = mouseX - centerX;
+        const distY = mouseY - centerY;
+        const maxDist = 50;
+        const strength = Math.min(1, Math.sqrt(distX * distX + distY * distY) / maxDist);
+        
+        if (strength < 1) {
+          cursorRing.style.transform = `translate(${ringX - 20 + distX * 0.2}px, ${ringY - 20 + distY * 0.2}px)`;
+        }
+      });
+    });
+    
+    // Dynamic element observer
+    const observer = new MutationObserver(() => {
+      const newMagnetic = document.querySelectorAll('a, button, .btn, .project-card');
+      newMagnetic.forEach(el => {
+        if (!el.hasMagneticListener) {
+          el.hasMagneticListener = true;
+          el.addEventListener('mouseenter', () => cursorRing.classList.add('magnetic'));
+          el.addEventListener('mouseleave', () => cursorRing.classList.remove('magnetic'));
+        }
+      });
+    });
+    
+    observer.observe(document.body, { childList: true, subtree: true });
+    
+    // Hide on window leave
+    document.addEventListener('mouseleave', () => {
+      mainCursor.style.opacity = '0';
+      cursorRing.style.opacity = '0';
+      canvas.style.opacity = '0';
+    });
+    
+    document.addEventListener('mouseenter', () => {
+      mainCursor.style.opacity = '1';
+      cursorRing.style.opacity = '0.8';
+      canvas.style.opacity = '1';
+    });
+  })();
+</script>
+
 
 </body>
 </html>
