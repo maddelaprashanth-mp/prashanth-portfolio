@@ -76,7 +76,7 @@ const portfolioData = {
     'App UI Design': { image: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=800&h=500&fit=crop', category: 'Web Design' },
     // Print items
     'Print Campaign': { image: 'https://images.unsplash.com/photo-1556761175-b413da4baf72?w=800&h=500&fit=crop', category: 'Print Design' },
-    'Poster Design': { image: 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=800&h=500&fit=crop', category: 'Print Design' }
+    'Poster Design': { image: "/imagess/SAIL INTO Discover the world's most breathtaking.jpg", category: 'Poster Design' }
 };
 
 // Add click event to all portfolio items
@@ -104,8 +104,8 @@ portfolioItems.forEach(item => {
                 modalImage.src = fallbackImages[category] || 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=800&h=500&fit=crop';
             }
             
-            modalTitle.innerText = title;
-            modalCategory.innerText = category;
+            // modalTitle.innerText = title;
+            // modalCategory.innerText = category;
             modal.style.display = 'block';
             document.body.style.overflow = 'hidden';
         }

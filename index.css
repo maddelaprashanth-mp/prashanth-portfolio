@@ -214,9 +214,11 @@ body {
 }
 
 .image-placeholder {
+    background-image: url("imagess/system.png");
+    background-size: cover;
     width: 100%;
     height: 300px;
-    background: linear-gradient(135deg, #ddd, #bbb);
+    /* background: linear-gradient(135deg, #ddd, #bbb); */
     border-radius: 20px;
 }
 
@@ -427,6 +429,7 @@ body {
     margin: 5% auto;
     padding: 0;
     width: 90%;
+    height: 100%;
     max-width: 800px;
     border-radius: 20px;
     overflow: hidden;
